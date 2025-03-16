@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { Transaction } from "@/models/Transaction";
 
-// ✅ Handle CORS preflight requests
+// ✅ Handle CORS Preflight Request
 export async function OPTIONS() {
   return NextResponse.json(
     {},
     {
       status: 200,
       headers: {
-        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Origin": "*", // Allow requests from any origin
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization",
       },
@@ -17,32 +17,40 @@ export async function OPTIONS() {
   );
 }
 
-// ✅ Get All Transactions (Sorted by Date)
+// ✅ Get All Transactions
 export async function GET() {
-  await connectToDatabase();
+  try {
+    await connectToDatabase();
 
-  const transactions = await Transaction.find().sort({ date: -1 });
+    const transactions = await Transaction.find().sort({ date: -1 }).limit(50);
 
-  return NextResponse.json(
-    { success: true, transactions },
-    {
-      status: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-      },
-    }
-  );
+    return NextResponse.json(
+      { success: true, transactions },
+      {
+        status: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
+      }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, message: "Failed to fetch transactions" },
+      { status: 500 }
+    );
+  }
 }
 
 // ✅ Create New Transaction
 export async function POST(req: NextRequest) {
-  await connectToDatabase();
-
   try {
+    await connectToDatabase();
+
     const { amount, description, date } = await req.json();
 
+    // ✅ Input Validation
     if (!amount || !description || !date) {
       return NextResponse.json(
         { success: false, message: "All fields are required" },
@@ -55,6 +63,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, transaction }, { status: 201 });
   } catch (error) {
+    console.error("Error creating transaction:", error);
     return NextResponse.json(
       { success: false, message: "Failed to create transaction" },
       { status: 500 }
@@ -64,11 +73,12 @@ export async function POST(req: NextRequest) {
 
 // ✅ Update Existing Transaction
 export async function PUT(req: NextRequest) {
-  await connectToDatabase();
-
   try {
+    await connectToDatabase();
+
     const { id, amount, description, date } = await req.json();
 
+    // ✅ Input Validation
     if (!id || !amount || !description || !date) {
       return NextResponse.json(
         { success: false, message: "All fields are required" },
@@ -91,6 +101,7 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json({ success: true, transaction }, { status: 200 });
   } catch (error) {
+    console.error("Error updating transaction:", error);
     return NextResponse.json(
       { success: false, message: "Failed to update transaction" },
       { status: 500 }
@@ -100,9 +111,9 @@ export async function PUT(req: NextRequest) {
 
 // ✅ Delete Transaction
 export async function DELETE(req: NextRequest) {
-  await connectToDatabase();
-
   try {
+    await connectToDatabase();
+
     const { id } = await req.json();
 
     if (!id) {
@@ -126,6 +137,7 @@ export async function DELETE(req: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
+    console.error("Error deleting transaction:", error);
     return NextResponse.json(
       { success: false, message: "Failed to delete transaction" },
       { status: 500 }
