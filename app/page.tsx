@@ -7,7 +7,7 @@ import Chart from "@/components/Chart";
 export default function Home() {
   const [transactions, setTransactions] = useState([]);
   const [editTransaction, setEditTransaction] = useState<any>(null);
-  const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
   async function fetchTransactions() {
     const res = await fetch(`${BASE_URL}/api/transactions`);
     const data = await res.json();
