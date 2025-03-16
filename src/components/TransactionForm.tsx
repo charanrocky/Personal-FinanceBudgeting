@@ -47,25 +47,20 @@ export default function TransactionForm({
     };
 
     let res;
+    const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
     if (existingTransaction?._id) {
-      res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/transactions`,
-        {
-          method: "PUT",
-          body: JSON.stringify({ id: existingTransaction._id, ...payload }),
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      res = await fetch(`${BASE_URL}/api/transactions`, {
+        method: "PUT",
+        body: JSON.stringify({ id: existingTransaction._id, ...payload }),
+        headers: { "Content-Type": "application/json" },
+      });
     } else {
-      res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/transactions`,
-        {
-          method: "POST",
-          body: JSON.stringify(payload),
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      res = await fetch(`${BASE_URL}/api/transactions`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     if (res.ok) {
