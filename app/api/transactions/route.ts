@@ -9,7 +9,7 @@ export async function OPTIONS() {
     {
       status: 200,
       headers: {
-        "Access-Control-Allow-Origin": "*", // Allow requests from any origin
+        "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization",
       },
