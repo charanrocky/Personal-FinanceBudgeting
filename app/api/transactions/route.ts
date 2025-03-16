@@ -2,6 +2,34 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { Transaction } from "@/models/Transaction";
 
+
+
+export async function OPTIONS() {
+  return NextResponse.json({}, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*", // Allow requests from any origin
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization"
+    }
+  });
+}
+
+export async function GET() {
+  await connectToDatabase();
+  
+  const transactions = await Transaction.find({});
+  
+  return NextResponse.json(transactions, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*", // Allow requests from any origin
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization"
+    }
+  });
+}
+
 export async function POST(req: NextRequest) {
   await connectToDatabase();
   const { amount, description, date } = await req.json();
