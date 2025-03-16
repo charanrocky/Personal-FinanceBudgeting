@@ -7,17 +7,15 @@ import Chart from "@/components/Chart";
 export default function Home() {
   const [transactions, setTransactions] = useState([]);
   const [editTransaction, setEditTransaction] = useState<any>(null);
-
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
   async function fetchTransactions() {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/transactions`
-    );
+    const res = await fetch(`${BASE_URL}/api/transactions`);
     const data = await res.json();
     setTransactions(data.transactions);
   }
 
   async function deleteTransaction(id: string) {
-    await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/transactions`, {
+    await fetch(`${BASE_URL}/api/transactions`, {
       method: "DELETE",
       body: JSON.stringify({ id }),
       headers: { "Content-Type": "application/json" },
