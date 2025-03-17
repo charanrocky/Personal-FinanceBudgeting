@@ -9,11 +9,27 @@ import TransactionForm from "@/components/TransactionForm";
 import CategoryPieChart from "@/components/CategoryPieChart";
 import DashboardSummary from "@/components/DashboardSummary";
 
-export default function Dashboard() {
-  const [transactions, setTransactions] = useState([]);
-  const [budgets, setBudgets] = useState([]);
+// ✅ Define Types
+type Transaction = {
+  id: string;
+  amount: number;
+  description: string;
+  date: string;
+  category: string;
+};
 
-  // ✅ Load transactions and budgets together
+type Budget = {
+  id: string;
+  category: string;
+  amount: number;
+  month: string; // Format: YYYY-MM
+};
+
+export default function Dashboard() {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [budgets, setBudgets] = useState<Budget[]>([]);
+
+  // ✅ Load data together
   async function loadData() {
     try {
       const [transactionsRes, budgetsRes] = await Promise.all([
@@ -39,7 +55,7 @@ export default function Dashboard() {
     loadData();
   }, []);
 
-  // ✅ Combine transactions with budgets
+  // ✅ Combine Transactions and Budgets
   const combinedData = budgets.map((budget) => {
     const actual = transactions
       .filter(
