@@ -17,7 +17,9 @@ export default function CategoryPieChart({
   transactions: any[];
 }) {
   const data = transactions.reduce((acc, tx) => {
-    const existing = acc.find((d) => d.name === tx.category);
+    const existing = acc.find(
+      (d: { name: string; value: number }) => d.name === tx.category
+    );
     if (existing) {
       existing.value += Number(tx.amount);
     } else {
