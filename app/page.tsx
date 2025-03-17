@@ -24,7 +24,10 @@ type Budget = {
   amount: number;
   month: string; // Format: YYYY-MM
 };
-
+type Props = {
+  transactions: Transaction[];
+  onRefresh: () => Promise<void>;
+};
 export default function Dashboard() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [budgets, setBudgets] = useState<Budget[]>([]);
