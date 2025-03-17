@@ -39,7 +39,7 @@ export default function CategoryPieChart({
         outerRadius={150}
         label
       >
-        {data.map((_, index) => (
+        {data.map((_: { name: string; value: number }, index) => (
           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
         ))}
       </Pie>
