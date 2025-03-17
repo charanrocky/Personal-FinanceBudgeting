@@ -1,73 +1,54 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
 
-interface Transaction {
-  _id?: string;
-  amount: number;
-  description: string;
-  date: string;
-}
+const CATEGORIES = [
+  "Food",
+  "Transport",
+  "Shopping",
+  "Entertainment",
+  "Bills",
+  "Other",
+];
 
-interface Props {
-  onSave: () => void;
-  existingTransaction?: Transaction;
-}
-
-export default function TransactionForm({
-  onSave,
-  existingTransaction,
-}: Props) {
+export default function TransactionForm({ onAdd }: { onAdd: () => void }) {
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
-
-  useEffect(() => {
-    if (existingTransaction) {
-      setAmount(existingTransaction.amount.toString());
-      setDescription(existingTransaction.description);
-      setDate(existingTransaction.date.split("T")[0]);
-    }
-  }, [existingTransaction]);
+  const [category, setCategory] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!amount || !description || !date) {
+    if (!amount || !description || !date || !category) {
       alert("Please fill all fields");
       return;
     }
 
-    const payload = {
-      amount: Number(amount),
-      description,
-      date,
-    };
-
-    let res;
-    const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-
-    if (existingTransaction?._id) {
-      res = await fetch(`${BASE_URL}/api/transactions`, {
-        method: "PUT",
-        body: JSON.stringify({ id: existingTransaction._id, ...payload }),
-        headers: { "Content-Type": "application/json" },
-      });
-    } else {
-      res = await fetch(`${BASE_URL}/api/transactions`, {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/transactions`,
+      {
         method: "POST",
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ amount, description, date, category }),
         headers: { "Content-Type": "application/json" },
-      });
-    }
+      }
+    );
 
     if (res.ok) {
       setAmount("");
       setDescription("");
       setDate("");
-      onSave();
+      setCategory("");
+      onAdd();
     }
   }
 
@@ -90,9 +71,22 @@ export default function TransactionForm({
         value={date}
         onChange={(e) => setDate(e.target.value)}
       />
-      <Button type="submit">
-        {existingTransaction ? "Update" : "Add"} Transaction
-      </Button>
+
+      {/* ✅ Use shadcn/ui Select Component */}
+      <Select onValueChange={setCategory}>
+        <SelectTrigger>
+          <SelectValue placeholder="Select Category" />
+        </SelectTrigger>
+        <SelectContent>
+          {CATEGORIES.map((cat) => (
+            <SelectItem key={cat} value={cat}>
+              {cat}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      <Button type="submit">Add Transaction</Button>
     </form>
   );
 }

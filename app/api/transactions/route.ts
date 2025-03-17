@@ -42,23 +42,26 @@ export async function GET() {
     );
   }
 }
-
 // ✅ Create New Transaction
 export async function POST(req: NextRequest) {
+  await connectToDatabase();
+
   try {
-    await connectToDatabase();
+    const { amount, description, date, category } = await req.json();
 
-    const { amount, description, date } = await req.json();
-
-    // ✅ Input Validation
-    if (!amount || !description || !date) {
+    if (!amount || !description || !date || !category) {
       return NextResponse.json(
         { success: false, message: "All fields are required" },
         { status: 400 }
       );
     }
 
-    const transaction = new Transaction({ amount, description, date });
+    const transaction = new Transaction({
+      amount,
+      description,
+      date,
+      category,
+    });
     await transaction.save();
 
     return NextResponse.json({ success: true, transaction }, { status: 201 });

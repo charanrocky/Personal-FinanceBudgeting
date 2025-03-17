@@ -2,12 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  // ✅ Set up custom API URL for client-side use
   env: {
     NEXT_PUBLIC_API_URL:
       process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000",
   },
-  // ✅ Allow API calls from any origin (CORS)
   async headers() {
     return [
       {
@@ -28,7 +26,6 @@ const nextConfig = {
       },
     ];
   },
-  // ✅ Enable URL imports for images and files
   images: {
     domains: ["localhost", "your-vercel-app.vercel.app"],
   },
